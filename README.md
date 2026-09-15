@@ -12,6 +12,8 @@ avatars and fixed chrome to see what the reprojection does to a real hierarchy.
 
 Android only.
 
+> Fan-made model, not an official Apple asset. No endorsement implied.
+
 ## The effect
 
 ```
@@ -137,3 +139,7 @@ exceptions taken on purpose, each with its date and reason — the portrait lock
 because auto-rotation would fight the gesture, and immersive full screen,
 because the effect lives at the screen edges and the system bars cover exactly
 the part that matters.
+
+## License
+
+[MIT](LICENSE) © Tiago Danin
