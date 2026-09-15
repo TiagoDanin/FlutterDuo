@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 
-/// Says the tap leads nowhere.
-///
-/// The mockup has no screens to open, and a tap that does nothing is worse than
-/// one that admits it. Its own file because three places need it — previously
-/// two identical copies plus a variant.
+/// Says the tap leads nowhere — a tap that does nothing is worse than one that
+/// admits it. Its own file because three places need it; it used to be two
+/// identical copies plus a variant.
 void showMockupNotice(BuildContext context, [String? what]) {
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(

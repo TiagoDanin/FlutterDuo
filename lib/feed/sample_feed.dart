@@ -1,10 +1,8 @@
 import 'post.dart';
 
-/// Builds an Unsplash URL at the requested size.
-///
-/// The width matters: without it Unsplash serves the original, and an image
-/// costs its decoded size, not its file size. A 4000 px photo in a 400 px card
-/// costs a hundred times the memory it needs.
+/// Builds an Unsplash URL at the requested size. The width matters: an image
+/// costs its decoded size, not its file size, and a 4000 px photo in a 400 px
+/// card costs a hundred times the memory it needs.
 String _unsplash(String id, {required int width}) =>
     'https://images.unsplash.com/photo-$id?w=$width&q=80&auto=format&fit=crop';
 

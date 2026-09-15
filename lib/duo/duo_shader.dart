@@ -4,10 +4,8 @@ import 'package:flutter/foundation.dart';
 
 enum DuoShaderStatus { loading, ready, unsupported }
 
-/// Loads `shaders/duo_fold.frag` once and keeps the instance.
-///
-/// Compiling is expensive and recreating the shader per frame would throw that
-/// away, so it is built once and only the uniforms change.
+/// Loads `shaders/duo_fold.frag` once and keeps the instance: compiling is
+/// expensive, so it is built once and only the uniforms change.
 class DuoShaderLoader extends ChangeNotifier {
   DuoShaderStatus _status = DuoShaderStatus.loading;
   DuoShaderStatus get status => _status;

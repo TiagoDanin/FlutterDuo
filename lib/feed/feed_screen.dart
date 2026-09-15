@@ -7,20 +7,15 @@ import 'sample_feed.dart';
 import 'widgets/post_card.dart';
 import 'widgets/story_rail.dart';
 
-/// The Halo feed — the content the shader folds.
-///
-/// States, named before the happy path (`state-set`): loading, empty, error,
-/// offline and partial do not apply, since the feed is constant and local with
-/// no request to fail. The only async state is each photo, inside its cell.
-/// Permission does not apply either: the sensor belongs to the settings.
+/// The Halo feed — the content the shader folds. Loading, empty, error,
+/// offline and partial do not apply (`state-set`): the feed is constant and
+/// local. The only async state is each photo, inside its own cell.
 class FeedScreen extends StatefulWidget {
   const FeedScreen({super.key, required this.onOpenSettings});
 
-  /// Called when the profile is tapped.
-  ///
-  /// The feed does not open settings itself: it lives inside the folding area,
-  /// and a sheet opened from here would inherit the distortion. `DuoStage`
-  /// opens it from outside.
+  /// Called when the profile is tapped. The feed does not open settings
+  /// itself: it lives inside the folding area, and a sheet opened from here
+  /// would inherit the distortion — `DuoStage` opens it from outside.
   final VoidCallback onOpenSettings;
 
   @override
@@ -172,11 +167,9 @@ class _FeedEnd extends StatelessWidget {
   }
 }
 
-/// The mockup's bottom bar.
-///
-/// Three destinations are scenery and navigate nowhere. Profile is the only
-/// real one: it opens the fold settings, the only thing here that is actually
-/// configurable.
+/// The mockup's bottom bar. Three destinations are scenery; profile is the
+/// only real one, opening the fold settings — the only thing here that is
+/// actually configurable.
 class _HaloNavigationBar extends StatelessWidget {
   const _HaloNavigationBar({required this.onOpenProfile});
 

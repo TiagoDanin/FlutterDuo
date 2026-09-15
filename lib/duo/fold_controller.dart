@@ -13,10 +13,9 @@ enum FoldSource {
   manual,
 }
 
-/// Single source of the effect's angle, from the sensor or the finger.
-///
-/// The UI watches only this. Nothing reads the accelerometer directly, because
-/// what matters is the panel's angle, not the raw sample.
+/// Single source of the effect's angle, from the sensor or the finger. The UI
+/// watches only this — nothing reads the accelerometer directly, because what
+/// matters is the panel's angle, not the raw sample.
 class FoldController extends ChangeNotifier {
   FoldController({TiltSensor? sensor, DuoFoldConfig? config})
     : sensor = sensor ?? TiltSensor(),
@@ -54,8 +53,8 @@ class FoldController extends ChangeNotifier {
   }
 
   /// Hands the panel to the sensor. This is how the app opens: the effect is
-  /// the product, and hiding it behind a button would make the first screen the
-  /// least interesting one it has.
+  /// the product, and hiding it behind a button would make the first screen
+  /// the least interesting one it has.
   Future<void> useSensor() async {
     if (_reduceMotion) return;
     _source = FoldSource.sensor;
@@ -70,11 +69,9 @@ class FoldController extends ChangeNotifier {
     await sensor.stop();
   }
 
-  /// Makes the current pose the reference one.
-  ///
-  /// Exists because the zero pose is not a property of the world: it is however
-  /// the user happened to be holding the device. Shifting in your chair has to
-  /// be recoverable.
+  /// Makes the current pose the reference one. The zero pose is not a property
+  /// of the world — it is however the user happened to be holding the device,
+  /// so shifting in your chair has to be recoverable.
   void calibrate() {
     if (_source != FoldSource.sensor) return;
     sensor.calibrate();

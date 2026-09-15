@@ -6,11 +6,9 @@ import '../post.dart';
 import '../sample_feed.dart';
 import 'halo_photo.dart';
 
-/// Horizontal story rail.
-///
-/// The app's only horizontal scroll, and it sits inside an item that does not
-/// scroll vertically on its own — `layout-column` allows nesting across axes,
-/// not along the same one.
+/// Horizontal story rail — the app's only horizontal scroll, sitting inside an
+/// item that does not scroll vertically on its own. Nesting across axes is
+/// allowed; along the same one is not.
 class StoryRail extends StatelessWidget {
   const StoryRail({super.key, required this.stories});
 
@@ -18,13 +16,9 @@ class StoryRail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Intrinsic height, not computed. Adding up avatar, rings, gaps and the
-    // label line by hand gives a number that goes wrong the moment text scales
-    // up, and the error shows as overflow rather than a warning.
-    //
-    // A `ListView` would demand that height upfront. No virtualisation because
-    // the rail holds a fixed handful: `list-virtualisation` is about lists that
-    // grow, and this one does not.
+    // Intrinsic height, not computed: adding the parts by hand gives a number
+    // that breaks the moment text scales up. A `ListView` would demand that
+    // height upfront, and a fixed handful of items does not need virtualising.
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       padding: const EdgeInsets.symmetric(horizontal: HaloSpacing.gutter),

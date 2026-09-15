@@ -6,12 +6,9 @@ import 'package:flutter_shaders/flutter_shaders.dart';
 import 'duo_fold_config.dart';
 import 'duo_shader.dart';
 
-/// Applies `duo_fold.frag` over [child].
-///
-/// It animates nothing on its own: [tiltDegrees] arrives already computed and
-/// it repaints. The shader stays in the path at all times — toggling it by
-/// angle swaps the image, and sensor noise around any threshold alternated the
-/// two every frame, which showed as the border flickering straight to round.
+/// Applies `duo_fold.frag` over [child]; [tiltDegrees] arrives already
+/// computed. The shader stays in the path at all times — toggling it by angle
+/// swaps the image, and noise around the threshold made the border flicker.
 class DuoFoldView extends StatelessWidget {
   const DuoFoldView({
     super.key,

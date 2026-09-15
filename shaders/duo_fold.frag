@@ -1,11 +1,9 @@
 #version 460 core
 #include <flutter/runtime_effect.glsl>
 
-// One side of the panel folding back, seen head-on.
-//
-// A vertical edge is the hinge and stays put; only the opposite side turns,
-// receding. Projected from a fixed eye, the panel becomes a quadrilateral —
-// what falls outside it is background, and background is black.
+// One side of the panel folding back, seen head-on. A vertical edge is the
+// hinge and stays put; only the opposite side turns, receding. Projected, the
+// panel becomes a quadrilateral — what falls outside it is black background.
 
 uniform vec2  uSize;          // 0,1: canvas size in logical pixels
 uniform float uTiltDegrees;   // 2: signed rotation, in degrees
@@ -79,11 +77,9 @@ vec3 applyRim(vec3 color, float distance, float feather) {
     return clamp(color + vec3(pow(rim, 3.0) * uRimLight), 0.0, 1.0);
 }
 
-// Inverts the projection across the width.
-//
-// A point `a` px from the hinge sits at x3d = hingeX + side*a*cos(tilt) and
-// z3d = -a*sin(tilt), projected by s = D / (D + a*sin(tilt)). Equating to the
-// screen x and isolating `a` gives a closed form — no iterative search.
+// Inverts the projection across the width. A point `a` px from the hinge sits
+// at x3d = hingeX + side*a*cos(tilt), z3d = -a*sin(tilt), projected by
+// s = D/(D + a*sin(tilt)); isolating `a` gives a closed form.
 float panelAlong(float screenX, float hingeX, float side, float tilt) {
     float eyeX = uSize.x * 0.5;
     float sx = screenX - eyeX;
@@ -149,11 +145,9 @@ void main() {
     // pixel covers more panel, and without this the far edge reads harder.
     float feather = kEdgeFeather / max(shrink, kEps);
 
-    // The corner grows FROM ZERO and saturates at half the turn.
-    //
-    // Starting at zero keeps the entry continuous: head-on, the visible corner
-    // is the device's own, and drawing a rounded clip there would stack one
-    // corner on another and pop in whole the instant the angle left zero.
+    // The corner grows FROM ZERO and saturates at half the turn. Head-on the
+    // visible corner is the device's own, so a rounded clip there would stack
+    // one corner on another and pop in whole the instant the angle left zero.
     float roundProgress = clamp(
         abs(uTiltDegrees) / (kMaxTiltDeg * kRoundSaturation),
         0.0,
@@ -209,13 +203,9 @@ void main() {
     if (sampleRadius < 0.5) {
         color = samplePanel(tap);
     } else {
-        // Golden-angle spiral: samples spread without stacking, and sqrt on the
-        // radius keeps density uniform per area.
-        //
-        // Tap count should track the radius, but Flutter demands a literal loop
-        // bound — so it always runs 48 and zeroes the weight of the surplus.
-        // The boundary weight is fractional, or the blur jumps each time the
-        // count crosses an integer.
+        // Golden-angle spiral: samples spread without stacking, sqrt keeps
+        // density uniform per area. Flutter demands a literal loop bound, so it
+        // runs 48 and zeroes the surplus — fractionally, or the blur jumps.
         float wantedTaps = clamp(sampleRadius * 2.4, 8.0, float(kMaxTaps));
         float spin = pixelJitter(fragCoord) * kTau;
 

@@ -25,11 +25,9 @@ class HaloApp extends StatelessWidget {
   }
 }
 
-/// Wires the three pieces together: shader, angle controller and mockup.
-///
-/// The mockup sits inside [DuoFoldView] and folds; the settings open over it,
-/// from the profile, and do not — they are the simulator's panel and must stay
-/// legible exactly when the screen is most distorted.
+/// Wires shader, angle controller and mockup together. The mockup folds; the
+/// settings open over it and do not, so they stay legible exactly when the
+/// screen is most distorted.
 class DuoStage extends StatefulWidget {
   const DuoStage({super.key});
 

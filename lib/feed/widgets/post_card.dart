@@ -175,10 +175,9 @@ class _PostActions extends StatelessWidget {
   }
 }
 
-/// An action icon with a full touch target.
-///
-/// The icon draws at 24; the target is 48. `button-target` and `touch-floor`
-/// are about the second measurement, not the first.
+/// An action icon with a full touch target. The icon draws at 24, the target
+/// is 48 — `button-target` and `touch-floor` are about the second measurement,
+/// not the first.
 class _ActionButton extends StatelessWidget {
   const _ActionButton({
     required this.icon,

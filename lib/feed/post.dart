@@ -14,10 +14,8 @@ class Author {
   final String avatarUrl;
 }
 
-/// A feed post.
-///
-/// All local and constant: no backend, and the feed never loads. The only
-/// async state on the screen is each photo, handled in its own cell.
+/// A feed post. All local and constant: no backend, and the feed never loads.
+/// The only async state is each photo, handled in its own cell.
 @immutable
 class Post {
   const Post({

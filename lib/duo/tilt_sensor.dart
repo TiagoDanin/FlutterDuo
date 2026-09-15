@@ -54,12 +54,9 @@ class TiltReading {
   final bool isReadable;
 }
 
-/// Measures lateral tilt against gravity.
-///
-/// Gravity measures the gesture directly, so there is no integration and no
-/// drift. Two details separate a steady reading from a jittery one: gravity has
-/// to be isolated from hand movement, and upright there is no measurement at
-/// all — see [_readableFloor].
+/// Measures lateral tilt against gravity — no integration, so no drift. Two
+/// details separate steady from jittery: gravity has to be isolated from hand
+/// movement, and upright there is no measurement at all.
 class TiltSensor extends ChangeNotifier {
   TiltSensor({
     Duration samplingPeriod = SensorInterval.gameInterval,

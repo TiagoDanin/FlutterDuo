@@ -1,15 +1,9 @@
 // ignore_for_file: avoid_print — a command-line script; the output is the
 // point.
 
-// Check for the gravity-to-tilt conversion.
-//
-// Run with:  dart run tool/check_tilt.dart
-//
-// Exists because this sign has inverted twice, and when it does the effect
-// folds the wrong side — something only visible with the device in hand.
-//
-// No framework on purpose: the project has no test suite, and a file that runs
-// under `dart run` does not ask for one.
+// Check for the gravity-to-tilt conversion: dart run tool/check_tilt.dart
+// This sign has inverted twice, and when it does the effect folds the wrong
+// side — visible only with the device in hand. No framework: `dart run` is it.
 
 import 'dart:math' as math;
 
@@ -22,11 +16,9 @@ void check(String what, bool ok) {
   print('${ok ? 'ok  ' : 'FAIL'}  $what');
 }
 
-/// The gravity an accelerometer reports with the device tilted by `degrees`.
-/// Positive raises the right edge.
-///
-/// It measures the reaction to gravity, so the vector points up in the world:
-/// `+z` lying flat, screen up.
+/// The gravity an accelerometer reports with the device tilted by `degrees`;
+/// positive raises the right edge. It measures the reaction to gravity, so the
+/// vector points up in the world: `+z` lying flat, screen up.
 ({double gx, double gz}) gravityAtTilt(double degrees) {
   final a = degrees * math.pi / 180;
   return (gx: 9.81 * math.sin(a), gz: 9.81 * math.cos(a));

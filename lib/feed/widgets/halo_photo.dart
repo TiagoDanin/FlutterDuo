@@ -3,11 +3,9 @@ import 'package:flutter/material.dart';
 
 import '../../theme/halo_theme.dart';
 
-/// A feed photo, with the three states it actually has.
-///
-/// The box exists before the bytes (`icon-reserve`): the parent reserves the
-/// ratio, so nothing shifts when a photo lands. That matters more here than
-/// usual — a layout still settling under the fold reads as a defect.
+/// A feed photo, with the three states it actually has. The box exists before
+/// the bytes (`icon-reserve`), so nothing shifts when a photo lands — a layout
+/// still settling under the fold reads as a defect.
 class HaloPhoto extends StatelessWidget {
   const HaloPhoto({super.key, required this.url, required this.description});
 
@@ -44,11 +42,9 @@ class HaloPhoto extends StatelessWidget {
   }
 }
 
-/// The photo did not arrive. Says what failed and stops promising.
-///
-/// No retry button: `cached_network_image` already retries when the cell
-/// returns to screen, and a button that changes nothing is the second failure
-/// `state-retry` warns about.
+/// The photo did not arrive. No retry button: `cached_network_image` already
+/// retries when the cell returns to screen, and a button that changes nothing
+/// is the second failure `state-retry` warns about.
 class _PhotoError extends StatelessWidget {
   const _PhotoError();
 

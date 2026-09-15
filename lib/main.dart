@@ -6,10 +6,8 @@ import 'app.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Real full screen: no status bar, no navigation bar.
-  //
-  // A deliberate exception to `layout-chrome`, recorded in `STACK.md`: the
-  // effect happens at the screen edges, and the system bars cover exactly that.
+  // Full screen. A `layout-chrome` exception recorded in `STACK.md`: the
+  // effect lives at the screen edges and the bars cover exactly that.
   // `immersiveSticky` returns them on a swipe, so nothing is unreachable.
   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
 

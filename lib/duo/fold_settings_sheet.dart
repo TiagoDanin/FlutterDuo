@@ -6,10 +6,9 @@ import 'duo_shader.dart';
 import 'fold_controller.dart';
 import 'tilt_sensor.dart';
 
-/// The effect's settings, opened from the profile.
-///
-/// They sit **outside** `DuoFoldView`: routed through the panel, the controls
-/// would be blurred and displaced exactly when they are needed most.
+/// The effect's settings, opened from the profile. They sit **outside**
+/// `DuoFoldView`: routed through the panel, the controls would be blurred and
+/// displaced exactly when they are needed most.
 Future<void> showFoldSettings(
   BuildContext context, {
   required FoldController controller,
@@ -84,10 +83,9 @@ class FoldSettingsSheet extends StatelessWidget {
   }
 }
 
-/// The sentence for the current state.
-///
-/// Each `sense-states` state gets its own, because what the user does next
-/// differs in each. A generic message here would be the same as no state.
+/// The sentence for the current state. Each `sense-states` state gets its own,
+/// because what the user does next differs in each — a generic message here
+/// would be the same as having no state at all.
 class _StatusCard extends StatelessWidget {
   const _StatusCard({required this.controller, required this.shaderLoader});
 
@@ -202,11 +200,9 @@ class _StatusCard extends StatelessWidget {
   }
 }
 
-/// The sensor's two actions: re-anchor and restart.
-///
-/// Restart exists because without it there was a dead end: with the sensor
-/// already selected and stopped, tapping the selected segment fires nothing —
-/// `SegmentedButton` only reports changes — and no way back remained.
+/// The sensor's two actions: re-anchor and restart. Restart exists because
+/// tapping an already-selected segment fires nothing — `SegmentedButton` only
+/// reports changes — which left no way back from a stopped sensor.
 class _SensorActions extends StatelessWidget {
   const _SensorActions({required this.controller});
 
@@ -240,11 +236,9 @@ class _SensorActions extends StatelessWidget {
   }
 }
 
-/// How much and which way, in numbers.
-///
-/// Not decoration: without it there is no telling whether the sensor reads the
-/// rotation the device actually has, and the reading is half of what this app
-/// does.
+/// How much and which way, in numbers. Not decoration: without it there is no
+/// telling whether the sensor reads the rotation the device actually has, and
+/// the reading is half of what this app does.
 class _TiltReadout extends StatelessWidget {
   const _TiltReadout({required this.controller});
 
