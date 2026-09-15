@@ -1,0 +1,24 @@
+name: flutter_duo
+description: "Halo — iPhone Duo effect em GLSL, dirigido pela inclinação do aparelho."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.11.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  sensors_plus: ^7.1.0
+  flutter_shaders: ^0.1.3
+  cached_network_image: ^3.4.1
+
+dev_dependencies:
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+
+  shaders:
+    - shaders/duo_fold.frag
