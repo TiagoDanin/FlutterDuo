@@ -1,114 +1,139 @@
-# FlutterDuo — Halo
+# FlutterDuo
 
-O *iPhone Duo effect* em Flutter: um fragment shader GLSL curva a interface real
-em perspectiva, e o progresso vem da **inclinação física do aparelho**.
+The *iPhone Duo effect* in Flutter: a GLSL fragment shader projects the UI as a
+panel folding in space, and the angle comes from the **device's physical tilt**.
 
-Deitado na mesa com a tela para cima, a tela fica plana. Levantar o aparelho
-fecha a dobra.
+**Raise one side of the device — that side is the one that folds back.**
 
-O conteúdo dobrado é **Halo**, um mockup de rede social de fotografia que não
-existe, com fotos do Unsplash. Ele está lá porque um retângulo colorido não
-revela nada sobre o efeito: é preciso texto pequeno ao lado de foto grande,
-avatar redondo e chrome fixo para ver o que a reprojeção faz.
+The panel's content is **Halo**, a mockup of a photo social network that does
+not exist, with photos from Unsplash. It is there because a coloured rectangle
+reveals nothing about the effect: you need small text beside large photos, round
+avatars and fixed chrome to see what the reprojection does to a real hierarchy.
 
-## O efeito
+Android only.
 
-Não há dobradiça no meio da tela. O conteúdo fica plano e nítido numa faixa
-central, e são as **bordas de cima e de baixo** que tombam para trás — borrando,
-escurecendo e se dissolvendo no void conforme se afastam do centro.
+## The effect
 
-`shaders/duo_fold.frag` faz, numa passada:
+```
+UI → perspective projection → rounded quadrilateral → clip → background
+```
 
-| Camada | O que faz |
+One vertical edge is the **hinge** and it does not move; only the opposite side
+turns, receding from the viewer. One side folds at a time — which one comes from
+the sign of the tilt.
+
+Projected from a stationary eye 2.4 screen-widths away, the panel stops being a
+rectangle. **What falls outside it is background, and background is black**:
+that is not an edge defect, it is the effect. At 45° roughly 40% of the screen
+is background.
+
+Distance from the hinge drives everything else:
+
+| | |
 |---|---|
-| **Curvatura em perspectiva** | mapeamento inverso tela → textura, resolvido por iteração de contagem fixa |
-| **Blur progressivo** | espiral de ângulo áureo com 13 taps, raio zero na faixa plana e máximo na borda |
-| **Sombreamento** | a borda que tomba recebe menos luz |
-| **Tint de vidro** | mistura sutil com azul frio, na linguagem Liquid Glass |
-| **Especular** | realce fino onde a curvatura começa, contido para não lavar a imagem |
-| **Vignette** | fade para o void em direção ao topo e à base |
+| **Blur** | opens with distance from the hinge; golden-angle spiral disc, 48 taps with per-pixel rotation |
+| **Darkening** | scattering light costs brightness, so it tracks the blur |
+| **Corners** | grow from zero and saturate at half the turn; rounded in panel space, so they become ellipses at an angle |
+| **Edge** | a thread of light — the border of a glass panel does not end, it lights up |
+| **Dispersion** | light leaks past the edge and dies within ~150px, instead of stopping dead at black |
 
-Com `uFold == 0` o shader faz *early return* pixel-perfect, e o Dart descarta o
-`AnimatedSampler` por completo — com a tela plana não se paga snapshot por
-frame nem se perde nitidez.
+Inverting the projection (screen pixel → panel point) has a **closed form**, no
+iterative search: isolating the distance to the hinge, it comes out linear once
+you multiply through by the denominator.
 
-## Como a inclinação vira dobra
+At zero angle the shader early-returns pixel-perfect. It still stays in the path
+at all times — toggling it by angle swaps the image, and sensor noise around any
+threshold alternated the two every frame, which showed up as the border
+flickering between straight and round.
 
-O ângulo sai de um **filtro complementar** sobre os dois sensores, porque nenhum
-dos dois serve sozinho: o acelerômetro dá o ângulo absoluto contra a gravidade
-mas treme a cada passo, e o giroscópio é suave mas deriva e não sabe onde é o
-chão.
+## How the tilt is read
+
+Plain accelerometer. Gravity measures the tilt directly: you only need to see
+which way it leans inside the device's frame. No integration, so no drift and
+nothing to re-centre on its own.
 
 ```
-tilt_acel = atan2(√(ĝx² + ĝy²), ĝz)          0 rad deitado, π/2 na vertical
-
-d(tilt)/dt = (ωx·ĝy − ωy·ĝx) / √(1 − ĝz²)    taxa exata, derivada de dĝ/dt = −ω × ĝ
-
-tilt = 0,86·(tilt + taxa·dt) + 0,14·tilt_acel
+gravity = accelerometer − userAccelerometer     discounting hand movement
+angle   = atan2(−gx, gz)                        relative to the calibrated pose
 ```
 
-A taxa do giroscópio é exata, não aproximada: como a gravidade é fixa no mundo,
-no referencial do aparelho ela gira com `−ω`, e derivar `tilt = acos(ĝz)` dá a
-fórmula acima. Perto de `ĝz = ±1` ela é singular — com o aparelho deitado não
-existe eixo de tombamento definido — e ali o acelerômetro, que já é preciso
-nesse ponto, assume sozinho.
+The subtraction matters: the raw accelerometer hands back gravity and motion
+summed together, and without isolating it, walking or gesturing moves the angle.
 
-O ângulo vira dobra com zona morta de 6° (uma mesa não é um plano perfeito) e
-fechamento aos 70°, por uma curva `smoothstep` para a tela não estalar para fora
-do plano.
+So does the minus sign on `gx`: the accelerometer measures the **reaction** to
+gravity, so the vector points up in the world. Without it, the side that folds
+is the opposite of the one raised. That sign has already inverted twice — it is
+what the check verifies.
 
-## Sem sensor, e sem querer sensor
+**There is a pose where the measurement does not exist.** With the device
+upright, the gesture's axis runs nearly parallel to gravity and too little of it
+remains in the measured plane. There the angle **stops** updating rather than
+being guessed, and the settings sheet says so.
 
-A inclinação nunca é a única rota:
+## When the sensor will not do
 
-- **Sem acelerômetro** — nenhuma amostra na janela de partida, e o seletor de
-  inclinação some em vez de ficar apagado.
-- **Movimento reduzido ligado no sistema** — a inclinação sai do caminho. Lido
-  pelos dois canais, `MediaQuery.disableAnimationsOf` (Android) e
-  `AccessibilityFeatures.reduceMotion` (iOS), porque ler só um derruba em
-  silêncio os usuários da outra plataforma.
-- **Sem suporte a shader** — o console diz isso e o mockup continua usável.
+Tilt is never the only route:
 
-O controle manual está sempre lá, no rodapé, dentro do alcance do polegar: a
-outra mão está segurando o aparelho inclinado.
+- **No accelerometer** — no sample within the startup window, and the motion
+  option disappears rather than sitting there greyed out.
+- **Reduce motion enabled system-wide** — the sensor steps aside. Read through
+  both channels, `MediaQuery.disableAnimationsOf` and
+  `AccessibilityFeatures.reduceMotion`, because reading only one silently drops
+  the other platform's users.
+- **No shader support** — the settings say so and the mockup stays usable.
 
-## Rodar
+A manual control in degrees is always available, under the profile icon.
+
+## Run
 
 ```sh
 flutter pub get
 flutter run
 ```
 
-O console fica no rodapé, fora da área que dobra — se dobrasse junto, o único
-controle do app ficaria desfocado exatamente quando mais se precisa dele.
+Settings open from **profile**, in the bottom bar. They sit outside the folding
+area: routed through the panel, the controls would be blurred and displaced
+exactly when you need them most.
 
-## Estrutura
+## Verify
+
+```sh
+flutter analyze
+dart run tool/check_tilt.dart      # the accelerometer sign
+flutter build apk --debug          # compiles the GLSL through impellerc
+```
+
+There is no test suite. The build is what catches a shader error before runtime,
+and the check covers the one piece of logic that has already broken twice and
+whose symptom only shows with the device in hand.
+
+## Layout
 
 ```
-shaders/duo_fold.frag      o efeito
+shaders/duo_fold.frag        the effect
 lib/duo/
-  tilt_sensor.dart         sensores e os estados que eles têm de verdade
-  fold_controller.dart     estado único da dobra, do sensor ou do dedo
-  duo_fold_config.dart     parâmetros do shader e a curva tilt → fold
-  duo_shader.dart          carga e ciclo de vida do FragmentProgram
-  duo_fold_view.dart       aplica o shader sobre a árvore de widgets
-  fold_console.dart        estado do sensor e controle manual
-lib/feed/                  o mockup do Halo
-lib/theme/halo_theme.dart  tokens de cor, espaçamento, raio e toque
+  tilt_math.dart             gravity → angle, free of Flutter imports
+  tilt_sensor.dart           the sensor and the states it actually has
+  fold_controller.dart       single source of the angle, sensor or finger
+  duo_fold_config.dart       the shader's physical parameters
+  duo_shader.dart            FragmentProgram loading and lifetime
+  duo_fold_view.dart         applies the shader over the widget tree
+  fold_settings_sheet.dart   sensor state, calibrate, manual control
+lib/feed/                    the Halo mockup
+lib/theme/halo_theme.dart    colour, spacing, radius and touch tokens
+tool/check_tilt.dart         sign check, runs under dart run
 ```
+
+`tilt_math.dart` is separate because `tilt_sensor.dart` pulls in Flutter through
+its import chain, and without isolating the formula the check would need the SDK
+to resolve `dart:ui`.
 
 ## Design
 
-A UI segue a skill [Trunative](E:/Work/Personal/Trunative/skills/). Os briefs
-que ela exige estão em `.trunative/`: `PRODUCT.md`, `DESIGN.md` (formato
-design.md) e `STACK.md`, que também registra as exceções aceitas de propósito —
-a trava em retrato é uma delas, porque a rotação automática competiria com a
-inclinação e giraria a UI no meio da dobra.
-
-## Escopo
-
-Somente Android. Sem iOS, sem web, sem suíte de testes.
-
-A verificação é `flutter analyze` mais o app rodando num aparelho — `flutter
-build apk --debug` também compila o GLSL pelo `impellerc`, então um erro de
-shader aparece no build e não só em tempo de execução.
+The UI follows the [Trunative](https://github.com/TiagoDanin/Trunative) skill. The
+briefs it requires live in `.trunative/`: `PRODUCT.md`, `DESIGN.md` (design.md
+format) and `STACK.md`, which also holds the shader's uniform contract and the
+exceptions taken on purpose, each with its date and reason — the portrait lock,
+because auto-rotation would fight the gesture, and immersive full screen,
+because the effect lives at the screen edges and the system bars cover exactly
+the part that matters.
