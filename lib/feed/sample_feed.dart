@@ -1,11 +1,10 @@
 import 'post.dart';
 
-/// Monta a URL de uma foto do Unsplash no tamanho pedido.
+/// Builds an Unsplash URL at the requested size.
 ///
-/// O parâmetro de largura importa: sem ele o Unsplash entrega o original, e
-/// `perf-decode` cobra a imagem pelo tamanho decodificado, não pelo tamanho do
-/// arquivo. Uma foto de 4000 px num card de 400 custa cem vezes mais memória
-/// do que precisa.
+/// The width matters: without it Unsplash serves the original, and an image
+/// costs its decoded size, not its file size. A 4000 px photo in a 400 px card
+/// costs a hundred times the memory it needs.
 String _unsplash(String id, {required int width}) =>
     'https://images.unsplash.com/photo-$id?w=$width&q=80&auto=format&fit=crop';
 
@@ -44,8 +43,8 @@ abstract final class HaloAuthors {
   );
 }
 
-/// O feed do mockup. Três posts: o bastante para haver rolagem real sob o
-/// vidro, pouco o bastante para o app não virar uma galeria.
+/// The mockup feed. Three posts: enough for real scrolling under the panel,
+/// few enough that the app does not become a gallery.
 abstract final class SampleFeed {
   static List<Post> posts() => [
     Post(

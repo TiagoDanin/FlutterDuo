@@ -18,18 +18,18 @@ class HaloApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: HaloTheme.light(),
       darkTheme: HaloTheme.dark(),
-      // O escuro é o modo desenhado primeiro, mas quem decide é o sistema.
+      // Dark was designed first, but the system decides.
       themeMode: ThemeMode.system,
       home: const DuoStage(),
     );
   }
 }
 
-/// Junta as três peças: o shader, o controle da curvatura e o mockup.
+/// Wires the three pieces together: shader, angle controller and mockup.
 ///
-/// O mockup fica dentro do [DuoFoldView] e curva; os ajustes abrem por cima, a
-/// partir do perfil, e não curvam — são o painel do simulador e precisam
-/// continuar legíveis exatamente quando a tela está mais distorcida.
+/// The mockup sits inside [DuoFoldView] and folds; the settings open over it,
+/// from the profile, and do not — they are the simulator's panel and must stay
+/// legible exactly when the screen is most distorted.
 class DuoStage extends StatefulWidget {
   const DuoStage({super.key});
 
@@ -48,10 +48,8 @@ class _DuoStageState extends State<DuoStage> with WidgetsBindingObserver {
     _shaderLoader.load();
   }
 
-  /// Movimento reduzido chega por dois caminhos e ler um só derruba em silêncio
-  /// os usuários da outra plataforma: `disableAnimationsOf` carrega o "Remover
-  /// animações" do Android, `reduceMotion` carrega o "Reduzir movimento" do
-  /// iOS.
+  /// Reduce motion arrives through two channels, and reading one silently
+  /// drops the other platform's users.
   void _syncReduceMotion() {
     _controller.setReduceMotion(
       MediaQuery.disableAnimationsOf(context) ||
@@ -64,10 +62,9 @@ class _DuoStageState extends State<DuoStage> with WidgetsBindingObserver {
     super.didChangeDependencies();
     _syncReduceMotion();
 
-    // O app abre já lendo o movimento: o efeito é o produto, e escondê-lo
-    // atrás de um botão faria a primeira tela ser a menos interessante que ele
-    // tem. Não roda quando movimento reduzido está ligado — `useSensor` recusa
-    // sozinho nesse caso.
+    // The app opens already reading movement: the effect is the product, and
+    // hiding it behind a button would make the first screen the least
+    // interesting one. `useSensor` declines on its own under reduce motion.
     _controller.useSensor();
   }
 
@@ -76,9 +73,8 @@ class _DuoStageState extends State<DuoStage> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    // Um sensor ligado com o app em segundo plano é bateria gasta com ninguém
-    // olhando. Ao voltar, ele religa sozinho, porque a inclinação é o modo
-    // padrão e o usuário não pediu para sair dele.
+    // A sensor running in the background is battery spent with nobody
+    // watching. It resumes on return, since tilt is the default mode.
     if (state == AppLifecycleState.resumed) {
       if (_controller.source == FoldSource.sensor) _controller.useSensor();
     } else {
@@ -111,8 +107,8 @@ class _DuoStageState extends State<DuoStage> with WidgetsBindingObserver {
           ? SystemUiOverlayStyle.light
           : SystemUiOverlayStyle.dark,
       child: ColoredBox(
-        // O void que o shader revela nas quinas. Fica atrás de tudo, para a
-        // borda curvada fundir com algo em vez de com o fundo do tema.
+        // The void the shader reveals around the panel. Behind everything, so
+        // the folded edge blends into it rather than into the theme.
         color: HaloTheme.voidColor,
         child: ListenableBuilder(
           listenable: Listenable.merge([_controller, _shaderLoader]),

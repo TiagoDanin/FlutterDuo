@@ -6,11 +6,10 @@ import 'duo_shader.dart';
 import 'fold_controller.dart';
 import 'tilt_sensor.dart';
 
-/// Os ajustes do efeito, abertos pelo perfil.
+/// The effect's settings, opened from the profile.
 ///
-/// Ficam **fora** do `DuoFoldView`: são o painel do simulador, não conteúdo do
-/// mockup. Se passassem pelo vidro, os controles ficariam borrados e
-/// deslocados exatamente quando o usuário mais precisa deles.
+/// They sit **outside** `DuoFoldView`: routed through the panel, the controls
+/// would be blurred and displaced exactly when they are needed most.
 Future<void> showFoldSettings(
   BuildContext context, {
   required FoldController controller,
@@ -85,11 +84,10 @@ class FoldSettingsSheet extends StatelessWidget {
   }
 }
 
-/// A frase do estado atual.
+/// The sentence for the current state.
 ///
-/// Cada um dos estados de `sense-states` tem a sua própria, porque o que o
-/// usuário faz a seguir é diferente em cada um. Uma mensagem genérica aqui
-/// equivaleria a não ter estado nenhum.
+/// Each `sense-states` state gets its own, because what the user does next
+/// differs in each. A generic message here would be the same as no state.
 class _StatusCard extends StatelessWidget {
   const _StatusCard({required this.controller, required this.shaderLoader});
 
@@ -124,8 +122,8 @@ class _StatusCard extends StatelessWidget {
     );
   }
 
-  /// A ordem importa: o que impede o efeito inteiro vem antes do que só troca
-  /// quem dirige o vidro.
+  /// Order matters: what blocks the whole effect comes before what merely
+  /// changes who drives it.
   (IconData, String, Color) _describe(ColorScheme scheme) {
     if (shaderLoader.status == DuoShaderStatus.unsupported) {
       return (
@@ -186,9 +184,8 @@ class _StatusCard extends StatelessWidget {
             'a tela fique reta.',
         scheme.onSurfaceVariant,
       ),
-      // Com o aparelho de pé, o eixo do gesto fica quase paralelo à gravidade
-      // e ela não tem mais o que dizer. O ângulo não é chutado: ele para. Dizer
-      // isso é o que `sense-accuracy` cobra.
+      // Upright, the gesture's axis runs nearly parallel to gravity and it
+      // has nothing left to say. The angle stops rather than being guessed.
       TiltStatus.running when !controller.sensor.reading.isReadable => (
         Icons.gps_not_fixed_rounded,
         'Nesta posição a gravidade não consegue medir a inclinação. Deite um '
@@ -205,12 +202,11 @@ class _StatusCard extends StatelessWidget {
   }
 }
 
-/// As duas ações que o sensor tem: reancorar e religar.
+/// The sensor's two actions: re-anchor and restart.
 ///
-/// Religar existe porque sem ele havia um beco: com o sensor já selecionado e
-/// parado, tocar no segmento selecionado não dispara nada — `SegmentedButton`
-/// só avisa quando a seleção muda — e não sobrava caminho para voltar. É o
-/// segundo fracasso de que `state-retry` fala.
+/// Restart exists because without it there was a dead end: with the sensor
+/// already selected and stopped, tapping the selected segment fires nothing —
+/// `SegmentedButton` only reports changes — and no way back remained.
 class _SensorActions extends StatelessWidget {
   const _SensorActions({required this.controller});
 
@@ -244,11 +240,11 @@ class _SensorActions extends StatelessWidget {
   }
 }
 
-/// Quanto e para que lado, em números.
+/// How much and which way, in numbers.
 ///
-/// Não é decoração: sem isto não dá para saber se o sensor está lendo a
-/// rotação que o aparelho realmente tem, e a leitura é metade do que este app
-/// faz.
+/// Not decoration: without it there is no telling whether the sensor reads the
+/// rotation the device actually has, and the reading is half of what this app
+/// does.
 class _TiltReadout extends StatelessWidget {
   const _TiltReadout({required this.controller});
 
@@ -305,9 +301,8 @@ class _TiltSlider extends StatelessWidget {
           value: controller.tiltDegrees.clamp(-limit, limit),
           min: -limit,
           max: limit,
-          // Desabilitado enquanto o sensor manda, porque os dois escrevendo no
-          // mesmo valor faria o controle brigar com a mão do usuário. O estado
-          // desabilitado é visível, não silencioso.
+          // Disabled while the sensor drives, or the two would fight over the
+          // same value. The disabled state is visible, not silent.
           onChanged: isManual ? controller.setManualTilt : null,
           label: '${controller.tiltDegrees.round()}°',
         ),
@@ -326,9 +321,8 @@ class _SourceSwitch extends StatelessWidget {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
 
-    // Com movimento reduzido ligado, a opção do sensor não é desabilitada: ela
-    // sai. Um botão apagado explicando por que não funciona é a coisa que
-    // `sense-absent` manda não desenhar.
+    // Under reduce motion the sensor option is removed, not greyed out: a
+    // dead button explaining itself is what `sense-absent` says not to draw.
     final sensorAvailable =
         !controller.reduceMotion &&
         controller.sensor.status != TiltStatus.absent;

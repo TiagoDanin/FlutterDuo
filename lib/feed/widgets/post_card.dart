@@ -6,7 +6,7 @@ import '../post.dart';
 import '../sample_feed.dart';
 import 'halo_photo.dart';
 
-/// Uma célula do feed: cabeçalho, foto, ações, legenda.
+/// A feed cell: header, photo, actions, caption.
 class PostCard extends StatelessWidget {
   const PostCard({
     super.key,
@@ -19,8 +19,8 @@ class PostCard extends StatelessWidget {
   final VoidCallback onToggleLike;
   final VoidCallback onToggleSave;
 
-  /// Proporção 4:5, a mais alta que o Instagram aceita e a que dá mais altura
-  /// de foto por rolagem. Fixa, porque a caixa existe antes dos bytes.
+  /// 4:5 — the tallest common ratio, so the most photo per scroll. Fixed,
+  /// because the box exists before the bytes.
   static const double _photoAspect = 4 / 5;
 
   @override
@@ -76,8 +76,8 @@ class _PostHeader extends StatelessWidget {
             name: post.author.name,
           ),
           const SizedBox(width: HaloSpacing.sm),
-          // Expanded, não largura fixa: no maior passo de acessibilidade o
-          // nome e o local ocupam bem mais linha do que no padrão.
+          // Expanded, not a fixed width: at the largest accessibility step
+          // the name and place take far more line than at the default.
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -139,11 +139,10 @@ class _PostActions extends StatelessWidget {
             icon: post.liked
                 ? Icons.favorite_rounded
                 : Icons.favorite_border_rounded,
-            // Vermelho é o significado que curtir já tem em toda rede social.
-            // Inventar um segundo vermelho de marca seria cor nova sem
-            // trabalho novo.
+            // Red is what a like already means everywhere. A second brand red
+            // would be a new colour doing no new work.
             color: post.liked ? scheme.error : scheme.onSurface,
-            // O rótulo diz o que vai acontecer, não o estado atual.
+            // The label says what will happen, not the current state.
             label: post.liked ? 'Descurtir' : 'Curtir',
             isToggled: post.liked,
             onPressed: onToggleLike,
@@ -176,10 +175,10 @@ class _PostActions extends StatelessWidget {
   }
 }
 
-/// Um ícone de ação com alvo de toque completo.
+/// An action icon with a full touch target.
 ///
-/// A altura desenhada do ícone é 24; o alvo é 48. `button-target` e
-/// `touch-floor` falam da segunda medida, não da primeira.
+/// The icon draws at 24; the target is 48. `button-target` and `touch-floor`
+/// are about the second measurement, not the first.
 class _ActionButton extends StatelessWidget {
   const _ActionButton({
     required this.icon,
@@ -194,8 +193,8 @@ class _ActionButton extends StatelessWidget {
   final String label;
   final VoidCallback onPressed;
 
-  /// Preenchido quando o controle tem estado ligado/desligado, para o leitor de
-  /// tela anunciar o valor e não só o nome (`a11y-name`).
+  /// Set when the control has an on/off state, so a screen reader announces
+  /// the value and not just the name (`a11y-name`).
   final bool? isToggled;
 
   @override
@@ -241,15 +240,15 @@ class _PostCaption extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            // A figura, não a palavra (`copy-numbers`).
+            // The figure, not the word (`copy-numbers`).
             '${_thousands(post.likes)} curtidas',
             style: theme.textTheme.bodyMedium?.copyWith(
               fontWeight: FontWeight.w600,
             ),
           ),
           const SizedBox(height: HaloSpacing.xxs),
-          // A legenda é o texto mais longo da tela. Sem maxLines: cortá-la com
-          // "ver mais" pediria uma tela que não existe neste mockup.
+          // The caption is the longest text here. No maxLines: truncating it
+          // would need a screen this mockup does not have.
           Text.rich(
             TextSpan(
               children: [
@@ -278,9 +277,9 @@ class _PostCaption extends StatelessWidget {
   }
 }
 
-/// Separador de milhar em pt-BR: ponto antes de cada grupo de três que fecha a
-/// string. Suficiente para um mockup de uma tela; um app de verdade usaria
-/// `intl` com o locale do sistema (`l10n-formats`), que é dependência nova.
+/// pt-BR thousands separator: a dot before every group of three that closes
+/// the string. Enough for a one-screen mockup; a real app would use `intl` with
+/// the system locale, which is a new dependency.
 String _thousands(int value) => value.toString().replaceAllMapped(
   RegExp(r'\d(?=(\d{3})+$)'),
   (m) => '${m[0]}.',

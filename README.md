@@ -10,8 +10,6 @@ not exist, with photos from Unsplash. It is there because a coloured rectangle
 reveals nothing about the effect: you need small text beside large photos, round
 avatars and fixed chrome to see what the reprojection does to a real hierarchy.
 
-Android only.
-
 > Fan-made model, not an official Apple asset. No endorsement implied.
 
 ## The effect

@@ -4,16 +4,15 @@ import 'package:flutter/foundation.dart';
 
 enum DuoShaderStatus { loading, ready, unsupported }
 
-/// Carrega `shaders/duo_fold.frag` uma vez e guarda a instância.
+/// Loads `shaders/duo_fold.frag` once and keeps the instance.
 ///
-/// Compilar o programa é caro e recriar o [ui.FragmentShader] a cada frame
-/// jogaria fora a compilação, então o shader é criado uma vez e só os uniforms
-/// mudam.
+/// Compiling is expensive and recreating the shader per frame would throw that
+/// away, so it is built once and only the uniforms change.
 class DuoShaderLoader extends ChangeNotifier {
   DuoShaderStatus _status = DuoShaderStatus.loading;
   DuoShaderStatus get status => _status;
 
-  /// Não-nulo equivale a pronto: só é atribuído no caminho de sucesso.
+  /// Non-null means ready: only assigned on the success path.
   ui.FragmentShader? _shader;
   ui.FragmentShader? get shader => _shader;
 
@@ -26,8 +25,8 @@ class DuoShaderLoader extends ChangeNotifier {
       _shader = program.fragmentShader();
       _status = DuoShaderStatus.ready;
     } catch (_) {
-      // Acontece de verdade: erro de compilação do GLSL no aparelho, ou uma GPU
-      // que recusa o programa. Sem shader o app continua usável, só não dobra.
+      // Happens for real: a GLSL compile error on device, or a GPU refusing the
+      // program. Without a shader the app still works, it just does not fold.
       _status = DuoShaderStatus.unsupported;
     }
     notifyListeners();

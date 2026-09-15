@@ -7,21 +7,20 @@ import 'sample_feed.dart';
 import 'widgets/post_card.dart';
 import 'widgets/story_rail.dart';
 
-/// O feed do Halo. É o conteúdo que o shader dobra.
+/// The Halo feed — the content the shader folds.
 ///
-/// Estados desta tela, nomeados antes do caminho feliz (`state-set`):
-/// carregando, vazio, erro, offline e parcial não se aplicam — o feed é
-/// constante e local, não há requisição para falhar. O único estado
-/// assíncrono é o de cada foto, e ele vive dentro da célula. Permissão não se
-/// aplica: nada aqui toca capacidade protegida; o sensor é do console.
+/// States, named before the happy path (`state-set`): loading, empty, error,
+/// offline and partial do not apply, since the feed is constant and local with
+/// no request to fail. The only async state is each photo, inside its cell.
+/// Permission does not apply either: the sensor belongs to the settings.
 class FeedScreen extends StatefulWidget {
   const FeedScreen({super.key, required this.onOpenSettings});
 
-  /// Chamado quando o perfil é tocado.
+  /// Called when the profile is tapped.
   ///
-  /// O feed não abre os ajustes por conta própria: ele vive dentro da área que
-  /// curva, e uma folha aberta daqui herdaria a distorção. Quem abre é o
-  /// `DuoStage`, de fora.
+  /// The feed does not open settings itself: it lives inside the folding area,
+  /// and a sheet opened from here would inherit the distortion. `DuoStage`
+  /// opens it from outside.
   final VoidCallback onOpenSettings;
 
   @override
@@ -60,10 +59,9 @@ class _FeedScreenState extends State<FeedScreen> {
         slivers: [
           const _HaloAppBar(),
           SliverToBoxAdapter(child: StoryRail(stories: _stories)),
-          // Sem divisor entre o trilho e o feed: ele encostava no primeiro card
-          // e lia como parte dele. O espaço já separa os dois (`layout-grouping`
-          // prefere espaço a linha), e uma linha a mais aqui só competia com a
-          // borda do card.
+          // No divider between rail and feed: it touched the first card and
+          // read as part of it. Space already separates them, and a line here
+          // only competed with the card's own border.
           const SliverToBoxAdapter(child: SizedBox(height: HaloSpacing.sm)),
           SliverList.separated(
             itemCount: _posts.length,
@@ -79,7 +77,7 @@ class _FeedScreenState extends State<FeedScreen> {
               ),
             ),
           ),
-          // O fim da lista é um estado desenhado, não um corte (`list-end`).
+          // The end of the list is a drawn state, not a cut (`list-end`).
           const SliverToBoxAdapter(child: _FeedEnd()),
         ],
       ),
@@ -174,11 +172,11 @@ class _FeedEnd extends StatelessWidget {
   }
 }
 
-/// Barra inferior do mockup.
+/// The mockup's bottom bar.
 ///
-/// Três destinos são cenário e não navegam, porque não há para onde. O perfil é
-/// o único real: é por ele que se chega aos ajustes da curvatura, que é a
-/// única coisa neste app que o usuário de fato configura.
+/// Three destinations are scenery and navigate nowhere. Profile is the only
+/// real one: it opens the fold settings, the only thing here that is actually
+/// configurable.
 class _HaloNavigationBar extends StatelessWidget {
   const _HaloNavigationBar({required this.onOpenProfile});
 

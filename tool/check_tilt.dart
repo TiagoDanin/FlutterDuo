@@ -1,16 +1,15 @@
-// ignore_for_file: avoid_print — é um script de linha de comando; a saída é
-// o produto dele.
+// ignore_for_file: avoid_print — a command-line script; the output is the
+// point.
 
-// Check da conversão gravidade -> inclinação.
+// Check for the gravity-to-tilt conversion.
 //
-// Roda com:  dart run tool/check_tilt.dart
+// Run with:  dart run tool/check_tilt.dart
 //
-// Existe porque este sinal já se inverteu duas vezes, e quando inverte o efeito
-// dobra o lado errado — algo que só se percebe com o aparelho na mão. É o menor
-// check que falha antes disso chegar lá.
+// Exists because this sign has inverted twice, and when it does the effect
+// folds the wrong side — something only visible with the device in hand.
 //
-// Sem framework de propósito: o projeto não tem suíte de testes, e um arquivo
-// que roda com `dart run` não pede nenhuma.
+// No framework on purpose: the project has no test suite, and a file that runs
+// under `dart run` does not ask for one.
 
 import 'dart:math' as math;
 
@@ -20,50 +19,50 @@ int _failures = 0;
 
 void check(String what, bool ok) {
   if (!ok) _failures++;
-  print('${ok ? 'ok   ' : 'FALHA'}  $what');
+  print('${ok ? 'ok  ' : 'FAIL'}  $what');
 }
 
-/// A gravidade que o acelerômetro reporta com o aparelho inclinado por `graus`
-/// em torno do eixo vertical da tela. Positivo levanta a aresta direita.
+/// The gravity an accelerometer reports with the device tilted by `degrees`.
+/// Positive raises the right edge.
 ///
-/// O acelerômetro mede a reação à gravidade, então o vetor aponta para cima no
-/// mundo: `+z` com o aparelho deitado e a tela para cima.
+/// It measures the reaction to gravity, so the vector points up in the world:
+/// `+z` lying flat, screen up.
 ({double gx, double gz}) gravityAtTilt(double degrees) {
   final a = degrees * math.pi / 180;
   return (gx: 9.81 * math.sin(a), gz: 9.81 * math.cos(a));
 }
 
 void main() {
-  print('=== deitado, tela para cima ===');
-  check('nivelado dá zero', tiltAngleFromGravity(0, 9.81).abs() < 1e-9);
+  print('=== flat, screen up ===');
+  check('level reads zero', tiltAngleFromGravity(0, 9.81).abs() < 1e-9);
 
-  print('\n=== o lado levantado é o lado que dobra ===');
-  // Dobradiça = sinal do ângulo: positivo põe a dobradiça na direita, e quem
-  // dobra é o lado OPOSTO a ela. Levantar a direita tem que dar negativo.
+  print('\n=== the raised side is the side that folds ===');
+  // The hinge follows the sign: positive puts it on the right, and the side
+  // that folds is the one opposite it. Raising the right must read negative.
   final right = gravityAtTilt(30);
   final left = gravityAtTilt(-30);
 
   check(
-    'levantar a direita dá ângulo negativo (dobradiça à esquerda)',
+    'raising the right reads negative (hinge left)',
     tiltAngleFromGravity(right.gx, right.gz) < 0,
   );
   check(
-    'levantar a esquerda dá ângulo positivo (dobradiça à direita)',
+    'raising the left reads positive (hinge right)',
     tiltAngleFromGravity(left.gx, left.gz) > 0,
   );
 
-  print('\n=== o ângulo bate com a inclinação aplicada ===');
+  print('\n=== the angle matches the tilt applied ===');
   for (final degrees in [-60.0, -30.0, -5.0, 5.0, 30.0, 60.0]) {
     final g = gravityAtTilt(degrees);
     final measured = tiltAngleFromGravity(g.gx, g.gz) * 180 / math.pi;
     check(
-      '${degrees.toStringAsFixed(0)}° medido como '
+      '${degrees.toStringAsFixed(0)}° reads as '
       '${measured.toStringAsFixed(1)}°',
       (measured + degrees).abs() < 0.01,
     );
   }
 
-  print('\n=== monotônico: mais inclinação, mais ângulo ===');
+  print('\n=== monotonic: more tilt, more angle ===');
   var previous = double.infinity;
   var monotonic = true;
   for (var d = -80; d <= 80; d += 5) {
@@ -72,8 +71,8 @@ void main() {
     if (measured > previous) monotonic = false;
     previous = measured;
   }
-  check('sem inversões ao longo da faixa', monotonic);
+  check('no inversions across the range', monotonic);
 
-  print('\n${_failures == 0 ? 'TUDO OK' : '$_failures FALHARAM'}');
-  if (_failures > 0) throw StateError('$_failures verificações falharam');
+  print('\n${_failures == 0 ? 'ALL OK' : '$_failures FAILED'}');
+  if (_failures > 0) throw StateError('$_failures checks failed');
 }

@@ -6,18 +6,12 @@ import 'package:flutter_shaders/flutter_shaders.dart';
 import 'duo_fold_config.dart';
 import 'duo_shader.dart';
 
-/// Aplica `duo_fold.frag` sobre [child].
+/// Applies `duo_fold.frag` over [child].
 ///
-/// O widget não anima nada por conta própria: ele recebe [tiltDegrees] já
-/// calculado e repinta. Quem produz o valor é o `FoldController`, seja a
-/// partir do sensor ou do controle manual.
-///
-/// O shader fica **sempre** no caminho enquanto existe, mesmo com o painel de
-/// frente. Ligar e desligar conforme o ângulo parece economia, mas troca a
-/// imagem: pela textura de um lado, direto do outro. Perto de qualquer limiar,
-/// o ruído do sensor alternava os dois a cada frame e a borda piscava entre
-/// reta e redonda. Sai barato porque o shader faz bypass pixel-perfect no
-/// ângulo zero; o que sobra é o snapshot da árvore.
+/// It animates nothing on its own: [tiltDegrees] arrives already computed and
+/// it repaints. The shader stays in the path at all times — toggling it by
+/// angle swaps the image, and sensor noise around any threshold alternated the
+/// two every frame, which showed as the border flickering straight to round.
 class DuoFoldView extends StatelessWidget {
   const DuoFoldView({
     super.key,
@@ -29,9 +23,8 @@ class DuoFoldView extends StatelessWidget {
 
   final DuoShaderLoader loader;
 
-  /// Rotação do painel em graus. O sinal decide qual aresta vertical fica
-  /// parada: positivo prende a direita e dobra o lado esquerdo para trás,
-  /// negativo faz o contrário. Um lado de cada vez.
+  /// Panel rotation in degrees. The sign picks which vertical edge stays put:
+  /// positive pins the right and folds the left back. One side at a time.
   final double tiltDegrees;
 
   final DuoFoldConfig config;
@@ -41,11 +34,11 @@ class DuoFoldView extends StatelessWidget {
   Widget build(BuildContext context) {
     final shader = loader.shader;
 
-    // Sem shader — ainda carregando, ou aparelho sem suporte — a tela é a tela.
-    // Não há estado de erro desenhado aqui: os ajustes é que contam isso.
+    // No shader — still loading, or unsupported — and the screen is the screen.
+    // The settings sheet is what reports that, not this.
     if (shader == null) return child;
 
-    // A dobradiça não é enviada: o shader a deriva do sinal de `uTiltDegrees`.
+    // The hinge side is not sent: the shader derives it from the tilt's sign.
     return AnimatedSampler((ui.Image image, Size size, ui.Canvas canvas) {
       shader
         ..setFloat(0, size.width)

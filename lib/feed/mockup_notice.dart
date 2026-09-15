@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 
-/// Diz que o toque não leva a lugar nenhum.
+/// Says the tap leads nowhere.
 ///
-/// O mockup não tem telas para abrir, e um toque que não responde é pior do que
-/// um que diz a verdade. Existe num arquivo só porque três lugares precisam
-/// dele — antes eram duas cópias idênticas da mesma função em arquivos
-/// diferentes, mais uma variante.
+/// The mockup has no screens to open, and a tap that does nothing is worse than
+/// one that admits it. Its own file because three places need it — previously
+/// two identical copies plus a variant.
 void showMockupNotice(BuildContext context, [String? what]) {
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(

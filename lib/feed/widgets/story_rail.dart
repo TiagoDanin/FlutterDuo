@@ -6,11 +6,11 @@ import '../post.dart';
 import '../sample_feed.dart';
 import 'halo_photo.dart';
 
-/// Trilho horizontal de stories.
+/// Horizontal story rail.
 ///
-/// É a única rolagem horizontal do app, e ela está dentro de um item que não
-/// rola verticalmente por conta própria — `layout-column` permite aninhar em
-/// eixos diferentes, não no mesmo.
+/// The app's only horizontal scroll, and it sits inside an item that does not
+/// scroll vertically on its own — `layout-column` allows nesting across axes,
+/// not along the same one.
 class StoryRail extends StatelessWidget {
   const StoryRail({super.key, required this.stories});
 
@@ -18,14 +18,13 @@ class StoryRail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Altura intrínseca, não calculada. Somar avatar, anéis, folgas e a linha
-    // do rótulo à mão dá um número que fica errado assim que o usuário aumenta
-    // o texto ou alguém mexe numa borda — e o erro aparece como overflow, não
-    // como aviso. Aqui a Column mede o próprio conteúdo e cresce com ele.
+    // Intrinsic height, not computed. Adding up avatar, rings, gaps and the
+    // label line by hand gives a number that goes wrong the moment text scales
+    // up, and the error shows as overflow rather than a warning.
     //
-    // Um `ListView` exigiria essa altura adiantada. Sem virtualização porque o
-    // trilho tem seis itens fixos: `list-virtualisation` fala de listas que
-    // crescem, e esta não cresce.
+    // A `ListView` would demand that height upfront. No virtualisation because
+    // the rail holds a fixed handful: `list-virtualisation` is about lists that
+    // grow, and this one does not.
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       padding: const EdgeInsets.symmetric(horizontal: HaloSpacing.gutter),
@@ -53,8 +52,8 @@ class _StoryItem extends StatelessWidget {
     final scheme = theme.colorScheme;
     final author = story.author;
 
-    // Visto e não visto se distinguem pela presença do anel, não pela
-    // saturação dele: `color-*` não deixa a cor carregar um estado sozinha.
+    // Seen and unseen differ by the ring's presence, not its saturation:
+    // colour may not carry a state on its own.
     final ring = story.seen
         ? null
         : LinearGradient(
@@ -80,10 +79,9 @@ class _StoryItem extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                // A borda do estado "visto" ocupa layout, então o padding
-                // encolhe na mesma medida: os dois estados precisam ter o
-                // mesmo diâmetro, senão o trilho fica com avatares de alturas
-                // diferentes.
+                // The "seen" border takes layout space, so the padding
+                // shrinks to match: both states need the same diameter, or the
+                // rail ends up with avatars of different heights.
                 padding: EdgeInsets.all(story.seen ? 1 : 2.5),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,

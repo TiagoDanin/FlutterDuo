@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-/// Uma pessoa fictícia do Halo.
+/// A fictional person in Halo.
 @immutable
 class Author {
   const Author({
@@ -14,10 +14,10 @@ class Author {
   final String avatarUrl;
 }
 
-/// Um post do feed.
+/// A feed post.
 ///
-/// Tudo aqui é local e constante: não há backend, e o feed nunca carrega. O
-/// único estado assíncrono da tela é o de cada foto, tratado na célula.
+/// All local and constant: no backend, and the feed never loads. The only
+/// async state on the screen is each photo, handled in its own cell.
 @immutable
 class Post {
   const Post({
@@ -36,8 +36,8 @@ class Post {
   final Author author;
   final String photoUrl;
 
-  /// Descrição da foto para leitor de tela. A foto é conteúdo, não decoração,
-  /// então ela diz o que é (`icon-alt`).
+  /// Photo description for screen readers. The photo is content, not
+  /// decoration, so it says what it is (`icon-alt`).
   final String photoDescription;
 
   final String place;
@@ -45,7 +45,7 @@ class Post {
   final int likes;
   final int comments;
 
-  /// Já formatado em relativo, porque é assim que o mockup mostra.
+  /// Pre-formatted as relative time, which is all the mockup shows.
   final String postedAgo;
 
   final bool liked;
@@ -67,7 +67,7 @@ class Post {
   }
 }
 
-/// Um story do trilho horizontal.
+/// A story in the horizontal rail.
 @immutable
 class Story {
   const Story({required this.author, required this.seen, this.isMine = false});
@@ -75,6 +75,6 @@ class Story {
   final Author author;
   final bool seen;
 
-  /// O primeiro item do trilho, que no mockup é o próprio usuário.
+  /// The rail's first item, which in the mockup is the user.
   final bool isMine;
 }

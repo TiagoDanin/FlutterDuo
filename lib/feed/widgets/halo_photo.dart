@@ -3,19 +3,18 @@ import 'package:flutter/material.dart';
 
 import '../../theme/halo_theme.dart';
 
-/// Uma foto do feed, com os três estados que ela realmente tem.
+/// A feed photo, with the three states it actually has.
 ///
-/// A caixa existe antes dos bytes (`icon-reserve`): a proporção é reservada
-/// pelo pai, então nada no feed se mexe quando uma foto chega. Isso importa
-/// mais aqui do que num app comum — um layout que ainda está se acomodando sob
-/// a dobra faz o efeito parecer um defeito.
+/// The box exists before the bytes (`icon-reserve`): the parent reserves the
+/// ratio, so nothing shifts when a photo lands. That matters more here than
+/// usual — a layout still settling under the fold reads as a defect.
 class HaloPhoto extends StatelessWidget {
   const HaloPhoto({super.key, required this.url, required this.description});
 
   final String url;
 
-  /// O que a foto mostra, para quem não a vê. Vazio marca decoração, e aqui
-  /// nunca é o caso: a foto é o conteúdo do post.
+  /// What the photo shows, for those who cannot see it. Empty would mark
+  /// decoration, which this never is: the photo is the post.
   final String description;
 
   @override
@@ -31,10 +30,9 @@ class HaloPhoto extends StatelessWidget {
           imageUrl: url,
           fit: BoxFit.cover,
           width: double.infinity,
-          // Um retângulo na forma da foto, não um spinner por cima dela
-          // (`state-loading`). Parado, porque `motion-loop` não aceita um
-          // shimmer em laço ao lado de conteúdo sendo lido — e porque o shader
-          // já está redesenhando a tela toda a cada frame.
+          // A rectangle shaped like the photo, not a spinner over it
+          // (`state-loading`). Static, because a looping shimmer next to text
+          // being read is what `motion-loop` rules out.
           placeholder: (context, _) =>
               ColoredBox(color: scheme.surfaceContainerHigh),
           errorWidget: (context, _, _) => const _PhotoError(),
@@ -46,11 +44,11 @@ class HaloPhoto extends StatelessWidget {
   }
 }
 
-/// A foto não chegou. Diz o que falhou e para de prometer.
+/// The photo did not arrive. Says what failed and stops promising.
 ///
-/// Sem botão de tentar de novo: o `cached_network_image` já tenta quando a
-/// célula volta à tela, e um botão que não faz nada de diferente é a segunda
-/// falha de que `state-retry` fala.
+/// No retry button: `cached_network_image` already retries when the cell
+/// returns to screen, and a button that changes nothing is the second failure
+/// `state-retry` warns about.
 class _PhotoError extends StatelessWidget {
   const _PhotoError();
 
@@ -89,8 +87,8 @@ class _PhotoError extends StatelessWidget {
   }
 }
 
-/// Avatar redondo. Mesmos três estados da foto, em escala de ícone: sem
-/// espaço para uma frase, então a falha vira uma inicial.
+/// Round avatar. Same three states as the photo, at icon scale: no room for a
+/// sentence, so failure becomes an initial.
 class HaloAvatar extends StatelessWidget {
   const HaloAvatar({
     super.key,

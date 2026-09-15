@@ -1,10 +1,11 @@
 import 'package:flutter/foundation.dart';
 
-/// Parâmetros físicos do `shaders/duo_fold.frag`.
+/// Physical parameters of `shaders/duo_fold.frag`.
 ///
-/// Descrevem a cena — onde está o observador, o quanto o vidro espalha e
-/// absorve —, não o desenho que sai dela. A ordem bate com os uniforms e é
-/// contrato: os floats vão por índice, e trocá-la quebra o efeito em silêncio.
+/// They describe the scene — where the viewer is, how much the glass scatters
+/// and absorbs — not the drawing that comes out of it. The order matches the
+/// uniforms and is a contract: floats go by index, and reordering breaks the
+/// effect silently.
 @immutable
 class DuoFoldConfig {
   const DuoFoldConfig({
@@ -17,50 +18,49 @@ class DuoFoldConfig {
     this.spreadStrength = 0.5,
   });
 
-  /// Distância do observador ao plano, em **larguras de tela**.
+  /// Viewer-to-plane distance, in **screen widths**.
   ///
-  /// Em larguras, e não em milímetros, porque a força da perspectiva vem da
-  /// razão entre distância e tamanho do objeto — assim o efeito fica igual em
-  /// qualquer telefone. Aumentar achata a perspectiva; não mexe no borrão.
+  /// In widths rather than millimetres because perspective strength comes from
+  /// the ratio of distance to object size, so the effect matches on any phone.
+  /// Raising it flattens the perspective; it does not touch the blur.
   final double eyeDistanceFactor;
 
-  /// Raio de borrão por pixel de afastamento.
+  /// Blur radius per pixel of recession.
   ///
-  /// Baixo por aritmética: o afastamento chega perto de meia largura de tela,
-  /// uns 540 px, então 0.12 dava borrão de 60 px em ângulos médios e apagava a
-  /// tela em vez de sugerir distância.
+  /// Low by arithmetic: recession approaches half a screen width, ~540 px, so
+  /// 0.12 gave a 60 px blur at middling angles and wiped the screen out instead
+  /// of suggesting distance.
   final double blurSpread;
 
-  /// Luz perdida por pixel de raio de borrão. Mesma aritmética: multiplicado
-  /// por um raio grande, qualquer valor generoso satura em preto.
+  /// Light lost per pixel of blur radius. Same arithmetic: against a large
+  /// radius, any generous value saturates to black.
   final double darkening;
 
-  /// Raio **máximo** dos cantos, em px lógicos.
+  /// **Maximum** corner radius, in logical px.
   ///
-  /// O shader parte de zero com o painel de frente — onde o canto visível é o
-  /// da tela do aparelho — e chega aqui na metade do giro. O arredondamento é
-  /// feito no espaço do painel, antes da projeção, então em ângulo os cantos
-  /// viram elipses sozinhos.
+  /// The shader starts at zero head-on — where the visible corner is the
+  /// device's own — and reaches this at half the turn. Rounding happens in
+  /// panel space, before projection, so corners become ellipses at an angle.
   final double cornerRadius;
 
-  /// Brilho do vidro na aresta, 0..1. A borda de um painel de vidro não
-  /// termina, ela acende — é esse fio que separa "vidro" de "recorte".
+  /// Glass glow along the edge, 0..1. A glass border does not end, it lights
+  /// up — that thread is what separates glass from a cut-out.
   final double rimLight;
 
-  /// Alcance da dispersão para fora da aresta, em px.
+  /// How far light spreads past the edge, in px.
   ///
-  /// Generoso de propósito: curto demais produz um contorno em volta do painel,
-  /// não uma dispersão, e o fundo volta a ser preto encostado na aresta.
+  /// Generous on purpose: too short reads as a contour around the panel rather
+  /// than a dispersion, and the background returns to black against the edge.
   final double spreadWidth;
 
-  /// Brilho do rastro da dispersão, 0..1 — não confundir com o alcance.
+  /// Brightness of the dispersion trail, 0..1 — not its reach.
   ///
-  /// Passando de ~0.4 com uma UI clara atrás, deixa de parecer vidro e vira
-  /// neon.
+  /// Past ~0.4 with a light UI behind it, this stops looking like glass and
+  /// starts looking like neon.
   final double spreadStrength;
 
-  /// Rotação máxima, em graus. Bem além de 45° porque é no fim da faixa que o
-  /// painel fica quase de perfil, e é o quase-perfil que vende o 3D.
+  /// Maximum rotation, in degrees. Well past 45° because it is at the end of
+  /// the range that the panel goes near edge-on, and that is what sells the 3D.
   static const double maxTiltDegrees = 80;
 
   double eyeDistancePixels(double screenWidth) =>

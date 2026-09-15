@@ -1,16 +1,11 @@
 import 'dart:math' as math;
 
-/// Inclinação lateral a partir da gravidade no referencial do aparelho.
+/// Lateral tilt from gravity in the device frame.
 ///
-/// O `-gx` não é ajuste de gosto, e este sinal já se inverteu duas vezes: o
-/// acelerômetro não mede a gravidade, mede a **reação** a ela. Deitado com a
-/// tela para cima ele lê `+z`, apontando para fora da tela — para cima no
-/// mundo, o oposto da gravidade.
+/// The `-gx` is not taste, and this sign has already inverted twice: the
+/// accelerometer measures the *reaction* to gravity, so raising the right edge
+/// makes `gx` positive and, unflipped, the folding side would be the left one.
 ///
-/// Levantar a aresta direita faz esse vetor pender para a direita, então `gx`
-/// fica positivo. Sem inverter, o ângulo sairia positivo, o que põe a dobradiça
-/// na direita — e aí quem dobra é o lado esquerdo, o oposto do lado levantado.
-///
-/// Este arquivo não importa Flutter de propósito: é o que permite verificá-lo
-/// com `dart run tool/check_tilt.dart`, sem SDK e sem framework de teste.
+/// No Flutter imports on purpose — that is what lets
+/// `dart run tool/check_tilt.dart` verify it without the SDK.
 double tiltAngleFromGravity(double gx, double gz) => math.atan2(-gx, gz);

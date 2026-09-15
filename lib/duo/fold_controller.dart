@@ -3,21 +3,20 @@ import 'package:flutter/foundation.dart';
 import 'duo_fold_config.dart';
 import 'tilt_sensor.dart';
 
-/// Quem está dirigindo o vidro.
+/// What is driving the panel.
 enum FoldSource {
-  /// A rotação do aparelho. O modo para o qual o app existe, e o modo em que
-  /// ele abre.
+  /// Device movement. What the app exists for, and how it opens.
   sensor,
 
-  /// O controle manual. É a rota que `a11y-gesture` exige, o destino de
-  /// `motion-reduced`, e o único modo possível num aparelho sem giroscópio.
+  /// Manual control. Required by `a11y-gesture`, the destination of
+  /// `motion-reduced`, and the only mode on a device without the sensor.
   manual,
 }
 
-/// Estado único do efeito, venha ele do sensor ou do dedo.
+/// Single source of the effect's angle, from the sensor or the finger.
 ///
-/// A UI observa só isto. Nada no app lê o giroscópio direto, porque o que
-/// importa é o ângulo do vidro, não a leitura crua.
+/// The UI watches only this. Nothing reads the accelerometer directly, because
+/// what matters is the panel's angle, not the raw sample.
 class FoldController extends ChangeNotifier {
   FoldController({TiltSensor? sensor, DuoFoldConfig? config})
     : sensor = sensor ?? TiltSensor(),
@@ -33,15 +32,15 @@ class FoldController extends ChangeNotifier {
 
   double _tiltDegrees = 0;
 
-  /// Rotação do painel em graus. Positivo leva a aresta direita para longe do
-  /// observador, e a dobradiça para a direita.
+  /// Panel rotation in degrees. Positive takes the right edge away from the
+  /// viewer and puts the hinge on the right.
   double get tiltDegrees => _tiltDegrees;
 
   bool _reduceMotion = false;
 
-  /// Com movimento reduzido ligado, o sensor não dirige nada: a tela não pode
-  /// se mexer porque o usuário mexeu o aparelho. O controle manual continua,
-  /// porque ele é o usuário pedindo o movimento de propósito.
+  /// With reduce motion on, the sensor drives nothing: the screen must not move
+  /// because the user moved the device. Manual stays, since there the movement
+  /// is asked for.
   bool get reduceMotion => _reduceMotion;
 
   void setReduceMotion(bool value) {
@@ -54,10 +53,9 @@ class FoldController extends ChangeNotifier {
     }
   }
 
-  /// Passa o vidro para o sensor.
-  ///
-  /// É o estado em que o app abre: o efeito é o produto, e escondê-lo atrás de
-  /// um botão faria a primeira tela ser a menos interessante que ele tem.
+  /// Hands the panel to the sensor. This is how the app opens: the effect is
+  /// the product, and hiding it behind a button would make the first screen the
+  /// least interesting one it has.
   Future<void> useSensor() async {
     if (_reduceMotion) return;
     _source = FoldSource.sensor;
@@ -65,26 +63,25 @@ class FoldController extends ChangeNotifier {
     await sensor.start();
   }
 
-  /// Devolve o vidro ao controle manual e solta o hardware.
+  /// Returns the panel to manual control and releases the hardware.
   Future<void> useManual() async {
     _source = FoldSource.manual;
     notifyListeners();
     await sensor.stop();
   }
 
-  /// Faz da pose atual a pose de referência, em que o vidro está encostado no
-  /// plano e o efeito desaparece.
+  /// Makes the current pose the reference one.
   ///
-  /// Existe porque a pose zero não é uma propriedade do mundo: é onde o usuário
-  /// estava segurando o aparelho quando começou. Quem muda de posição na
-  /// cadeira precisa poder dizer "é aqui agora".
+  /// Exists because the zero pose is not a property of the world: it is however
+  /// the user happened to be holding the device. Shifting in your chair has to
+  /// be recoverable.
   void calibrate() {
     if (_source != FoldSource.sensor) return;
     sensor.calibrate();
   }
 
-  /// Move o painel pelo controle manual. Ignorado enquanto o sensor manda, para
-  /// os dois não disputarem o mesmo valor.
+  /// Ignored while the sensor is driving, so the two do not fight over the same
+  /// value.
   void setManualTilt(double degrees) {
     if (_source != FoldSource.manual) return;
     _apply(
@@ -98,18 +95,14 @@ class FoldController extends ChangeNotifier {
   void _onSensorChanged() {
     if (_source != FoldSource.sensor) return;
 
-    if (sensor.isLive) {
-      _apply(sensor.reading.degrees);
-    } else {
-      // Sensor ausente, falhando ou ainda subindo: o painel volta a ficar de
-      // frente em vez de congelar num ângulo que ninguém pediu.
-      _apply(0);
-    }
+    // Absent, failing or still starting: the panel returns to facing front
+    // rather than freezing at an angle nobody asked for.
+    _apply(sensor.isLive ? sensor.reading.degrees : 0);
   }
 
   void _apply(double degrees) {
-    // Um vigésimo de grau é bem menos do que qualquer pixel consegue mostrar;
-    // abaixo disso repintar a tela inteira é trabalho jogado fora.
+    // A twentieth of a degree is far below what any pixel can show; repainting
+    // the whole screen for less is work thrown away.
     if ((_tiltDegrees - degrees).abs() < 0.05) return;
     _tiltDegrees = degrees;
     notifyListeners();

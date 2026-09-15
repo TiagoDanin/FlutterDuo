@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Escala de espaçamento do `DESIGN.md`. Todo gap do app sai daqui.
+/// Spacing scale from `DESIGN.md`. Every gap in the app comes from here.
 abstract final class HaloSpacing {
   static const double xxs = 4;
   static const double xs = 8;
@@ -10,12 +10,12 @@ abstract final class HaloSpacing {
   static const double xl = 24;
   static const double xxl = 32;
 
-  /// Gutter horizontal do feed.
+  /// Feed's horizontal gutter.
   static const double gutter = md;
 }
 
-/// Raios do `DESIGN.md`. Cantos redondos não são estética aqui: uma quina viva
-/// serrilha quando o shader a reprojeta em ângulo raso.
+/// Radii from `DESIGN.md`. Rounding is not decoration here: a sharp corner
+/// aliases when the shader reprojects it at a shallow angle.
 abstract final class HaloRadius {
   static const BorderRadius photo = BorderRadius.all(Radius.circular(12));
   static const BorderRadius card = BorderRadius.all(Radius.circular(16));
@@ -24,8 +24,8 @@ abstract final class HaloRadius {
   );
 }
 
-/// Alvos de toque. O piso é 48 em ambas as plataformas; iOS pede 44 e o Android
-/// 48, então 48 atende os dois sem ramificar.
+/// Touch targets. iOS asks 44 and Android 48, so 48 satisfies both without
+/// branching.
 abstract final class HaloTouch {
   static const double minTarget = 48;
   static const double avatar = 40;
@@ -33,8 +33,8 @@ abstract final class HaloTouch {
 }
 
 abstract final class HaloTheme {
-  /// O void que o shader revela na dobra. Não é uma cor de tema: é a ausência
-  /// de tela, e por isso é a mesma nos dois modos.
+  /// The void the shader reveals around the panel. Not a theme colour — it is
+  /// the absence of screen, so it is the same in both modes.
   static const Color voidColor = Color(0xFF050810);
 
   static ThemeData dark() => _build(_darkScheme);
@@ -78,8 +78,8 @@ abstract final class HaloTheme {
     surfaceContainerHigh: Color(0xFFEDEFF4),
     surfaceContainerHighest: Color(0xFFE4E7EE),
     onSurfaceVariant: Color(0xFF555E6E),
-    // Medido, não escolhido a olho: em #D7DBE3 o contorno ficava a 1.31:1 da
-    // superfície clara e sumia dentro dela. Ver `test/contrast_test.dart`.
+    // Measured, not eyeballed: at #D7DBE3 the outline sat at 1.31:1 against
+    // the light surface and vanished into it.
     outline: Color(0xFFC4CAD6),
     outlineVariant: Color(0xFFDCE0E7),
     error: Color(0xFFB3261E),
@@ -93,8 +93,8 @@ abstract final class HaloTheme {
 
     return base.copyWith(
       scaffoldBackgroundColor: scheme.surface,
-      // Sem sombra em lugar nenhum: a profundidade do app é calculada pelo
-      // shader, e uma sombra desenhada compete com ela.
+      // No shadows anywhere: depth is computed by the shader, and a drawn
+      // shadow competes with it.
       appBarTheme: AppBarTheme(
         backgroundColor: scheme.surface,
         surfaceTintColor: Colors.transparent,
@@ -137,8 +137,8 @@ abstract final class HaloTheme {
         behavior: SnackBarBehavior.floating,
         shape: const RoundedRectangleBorder(borderRadius: HaloRadius.photo),
       ),
-      // Peso é estrutura. Nada de w300: o shader desfoca, e um traço fino
-      // desfocado desaparece antes de ficar bonito.
+      // Weight is structure. No w300: the shader blurs, and a thin stroke
+      // blurred disappears before it looks good.
       textTheme: base.textTheme.apply(
         bodyColor: scheme.onSurface,
         displayColor: scheme.onSurface,
